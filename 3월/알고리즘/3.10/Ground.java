@@ -89,15 +89,15 @@ public class Ground {
 		while (! queue.isEmpty()) {
 			location temp = queue.poll();
 			for (int next : nList.get(temp.next)) {
-				if (! visit[next]) { // 아직 방문한 곳이 아니라면
-					String key = ""+temp.next+","+next;
-					int distance = temp.prefixSum+map.get(key); //가려고 하는 곳의 거리를 확인, 누적해서 확인
-					// 왜냐하면 처음 이 함수가 실행될때 파라미터로 받은 거리에서 시작해서 그 거리만큼만 가려고하니까
-					if (distance <= k) { // 갈 수 있는 거리임
+				String key = ""+temp.next+","+next;
+				int distance = temp.prefixSum+map.get(key); //가려고 하는 곳의 거리를 확인, 누적해서 확인
+				// 왜냐하면 처음 이 함수가 실행될때 파라미터로 받은 지점에서 시작해서 그 거리만큼만 가려고하니까
+				if (distance <= k) { // 갈 수 있는 거리임, 
+					if (! visit[next]) {// 처음으로 도착했다면 합계에 포함
 						visit[next]=true;
-						total+=score[next];
-						queue.add(new location(next, distance));
+						total+=score[next];						
 					}
+					queue.add(new location(next, distance));
 				}	
 			}
 		}
