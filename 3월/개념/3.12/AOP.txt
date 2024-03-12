@@ -1,0 +1,17 @@
+어떤 객체에 특정 기능만 해야하는걸 빼고 공통된걸 모아다가 Aspect에 저장
+before -> afterReturn(target 성공적으로 실행) or afterThrow(target에서 예외발생) -> after
+각각의 어노테이션은 실행시점임
+around = 핵심객체 앞뒤로실행, (before+after(~~)+after)인 느낌 
+poincut = 뭘 실행할건지에 대한 조건문을 반영할 범위(객체)?
+expression= 구체적으로 어떻게? 를 설정 expression="execution(* *(..))" <- 객체 내 모든 메서드 들을 실행
+Aspect = 공통 기능을 모아둔 객체, 여기에 없는 기능은 핵심기능
+
+target = 핵심기능을 가진 객체
+joinpoint = 아직 잘 모르겠음
+pointcut= joinpoint들 중에 기능을 적용하는 범위...?
+advice = Aspect에 모여있는 부가 기능들?
+
+프록시 = 대신해주는것? 이라고는 하는데 아직 와닿진 않음..
+
+아직 잘 모르겠다...
+ 
