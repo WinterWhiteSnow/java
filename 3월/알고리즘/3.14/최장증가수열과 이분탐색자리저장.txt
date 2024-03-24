@@ -1,0 +1,111 @@
+package babo;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+
+public class Babo {
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+	static StringTokenizer st;
+	static StringBuilder sb;
+	static int[] nList; // 기본 배열
+	static int[] index; // 각 배열의 요소가 lis상태에서 몇번째에 올 수 있는지 저장
+	static ArrayList<Integer> binary; // 현재 최장증가수열로 만들었을때의 상태, 순서가 꼬이는건 상관X index에서 그걸 확실하게 정립할거라서
+	
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		int l = Integer.parseInt(br.readLine());
+		st = new StringTokenizer(br.readLine());
+		nList = new int[l];
+		index = new int[l];
+		binary = new ArrayList<>();
+		for (int x = 0;  x< l; x ++) {
+			nList[x]=Integer.parseInt(st.nextToken());
+		}
+		crescendo(l);
+		ArrayList<Integer> answer = new ArrayList<>();
+		int location = binary.size()-1;
+		while (location >= 0) {
+			for (int i = l-1; i >= 0; i --) {
+				if (location == index[i]) {
+					location--;
+					answer.add(nList[i]);
+				}
+			}
+		}
+//		Collections.reverse(answer);
+		sb = new StringBuilder();
+		sb.append(""+binary.size()+"\n");
+		for (int i =answer.size()-1; i >= 0; i --) {
+			sb.append(answer.get(i)+" ");
+		}
+		bw.write(sb.toString());
+		
+		bw.flush();
+		bw.close();
+		br.close();
+		
+	}
+	
+	public static void crescendo(int n) {
+		for (int ind = 0; ind < n; ind++ ) {
+//			System.out.println("###############################");
+//			System.out.println("시작하기전의 상태!");
+//			System.out.println(Arrays.toString(index));
+//			System.out.println("그래서 지금까지의 증가수열" + binary);
+			int num = nList[ind];
+			if (ind == 0) { // 첫시작이면 무조건 넣어줌
+				binary.add(num);
+				index[ind]=0;
+			}else { // 현재 길이가 1이상임
+				if (binary.get(binary.size()-1) < num) { // 길이가 증가
+					binary.add(num);
+					index[ind]=binary.size()-1;
+				} else { // 길이가 증가하지 않고 갱신됨
+					int next =search(binary.size()-1, num);
+//					System.out.println(num+"의 자리 : "+next);
+					index[ind]=next;					
+					binary.set(next, num);
+				}
+			}
+//			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+//			System.out.println("각자의 자리 : "+ Arrays.toString(index));
+//			System.out.println("binary : "+binary);
+		}
+	}
+	
+	public static int search(int end, int num) {
+		int start = 0;
+//		System.out.println(num+" 의 자리 찾기!");
+		while (start < end) {
+			int mid = (start+end)/2;
+			int midNum = binary.get(mid);
+//			System.out.println("현재 위치  : " +mid+" 그리고 그 값 : "+midNum);
+//			System.out.println("start : "+start+" end : "+end);
+			if (midNum > num) {
+				end = mid; // mid-1이걸하면 안됐네!
+//				System.out.println("그럼 이전값 : "+nList[(end+start)/2]);
+//				if(binary.get((end+start)/2)  < num) {
+//					end++;
+//				}
+			}else if(midNum == num) {
+				return mid;
+			}
+			else {
+				start = mid+1;
+			}
+		}
+//		System.out.println("넘겨주기전 : "+end);
+		return end;
+		
+	}
+}

@@ -1,0 +1,128 @@
+package Line;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+class location implements Comparable<location>{ // 나중에 Collections.sort()를 위해서 compareTo를 내장해놓는다
+	int left;
+	int right;
+	public location(int left, int right) {
+		super();
+		this.left = left;
+		this.right = right;
+	}
+	@Override
+	public int compareTo(location o) {
+		// TODO Auto-generated method stub
+		if (this.left < o.left) {
+			return -1;
+		} else if (this.left > o.left) {
+			return 1;
+		}
+		return 0;
+	}
+	@Override
+	public String toString() {
+		return "location [left=" + left + ", right=" + right + "]";
+	}
+}
+
+public class line {
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+	static StringTokenizer st;
+	static StringBuilder sb;
+	static ArrayList<location> nList; // 입력값들 저장할 배열, 나중에 왼쪽수 기준으로 오름차순 정렬함
+	static ArrayList<location> binary; // 최장증가수열을 담을 곳, 순서가 엇갈려도 ok. index가 제대로 저장해둘꺼야
+	static int[] index; // 각 원소들이 최장증가수열에서 어떤 위치에 차지하는지 저장하는 배열
+	static Map<Integer, Integer> map; // 원본배열에 바로 접근하기 위한 맵, hashCode를 key값으로 둘 예정
+	
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		int r = Integer.parseInt(br.readLine());
+		nList = new ArrayList<>();
+		binary = new ArrayList<>();
+		index = new int[r];
+		map = new HashMap<Integer, Integer>();
+		for (int i = 0; i < r; i ++) {
+			st = new StringTokenizer(br.readLine());
+			int left = Integer.parseInt(st.nextToken());
+			int right = Integer.parseInt(st.nextToken());
+			location temp = new location(left, right);
+			nList.add(temp);
+			map.put(temp.hashCode(), i);
+		}
+		Collections.sort(nList);
+		go(r);
+		sb = new StringBuilder();
+		ArrayList<Integer> temp = new ArrayList<>();
+		int standard = binary.size()-1;
+		for (int ind = r-1; ind >=0; ind --) {
+			if (index[ind]==standard) {
+				standard--;
+			} else {
+				temp.add(nList.get(ind).left);
+			}
+		}
+		Collections.reverse(temp);
+		for (int i = 0; i < temp.size()-1; i ++) {
+			sb.append(temp.get(i)+"\n");
+		}
+		sb.append(temp.get(temp.size()-1));
+//		System.out.println(Arrays.toString(index));
+		bw.write(""+(r-binary.size())+"\n");
+		bw.write(sb.toString());
+		
+		bw.flush();
+		bw.close();
+		br.close();
+	}
+	
+	public static int search(int num) {
+		int start = 0;
+		int end = binary.size()-1;
+		int mid = 0;
+		while (start < end) {
+			mid = (start+end)/2;
+			if (binary.get(mid).right > num) {
+				end = mid;
+			} else if (binary.get(mid).right == num) {
+				return mid;
+			} else {
+				start = mid+1;
+			}
+		}
+		return end;
+	}
+	
+	public static void go(int r) {
+		for (int i = 0; i < r; i ++) {
+			if (i == 0) {
+				binary.add(nList.get(i));
+			} else { // 길이가 1이상일때
+				int lastNum = binary.get(binary.size()-1).right;
+				location temp = nList.get(i);
+				if (temp.right > lastNum) { // 훨씬 더 큰값이라서 길이가 늘어남
+					binary.add(nList.get(i));
+					index[i]=binary.size()-1;
+				} else { // 가장 최근값보다 작은 값임, 자기 자신의 위치를 찾아야함
+					int ind = search(temp.right);//자기자신의 위치를 찾음
+					binary.set(ind, nList.get(i));
+					index[i]=ind;
+				}
+			}
+//			System.out.println("갱신!!!");
+//			for (int k = 0; k < binary.size(); k ++) {
+//				System.out.println(binary.get(k).toString()+" ");
+//			}
+		}
+	}
+}

@@ -1,0 +1,66 @@
+package flow;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
+
+
+//https://www.acmicpc.net/problem/11404
+
+public class flow {
+	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	static StringTokenizer st;
+	static long[][] nList; // 플루이드 워셜
+	
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		int n = Integer.parseInt(br.readLine());
+		int r = Integer.parseInt(br.readLine());
+		nList = new long[n+1][n+1];
+		//일단 모든
+		for (int a = 1; a <= n; a ++) {
+			for (int b = 1; b <= n; b ++) {
+				nList[a][b]=Integer.MAX_VALUE; // 모두 Integer 최댓값으로 갱신
+			}
+		}
+
+		for (int i = 0; i < r; i ++) {
+			st = new StringTokenizer(br.readLine());
+			int start = Integer.parseInt(st.nextToken());
+			int end = Integer.parseInt(st.nextToken());
+			int cost = Integer.parseInt(st.nextToken());
+			// 기본적으로 배열을 넣어둠
+			// 단방향!
+			if (nList[start][end] > cost) { // 혹여나 동일한 경로인데 더 작은 값이 입력으로 올 수 있으니
+				nList[start][end]=cost;
+			}
+		}
+		//플루이드 워셜 진행
+		for (int mid = 1; mid <= n; mid ++) {
+			for (int start = 1; start<= n; start++) {
+				for (int end = 1; end <=n; end++ ) {
+					if (start == end) { // 자기자신으로 가는거라면
+						continue;
+					}
+					nList[start][end]=Math.min(nList[start][end],nList[start][mid]+nList[mid][end]);						
+				}
+			}
+		}
+		for (int i = 1; i <= n; i ++) {
+			for (int ii = 1; ii <=n; ii ++) {
+				if (nList[i][ii] >= Integer.MAX_VALUE) { // 존재할 수 없는 경로
+					nList[i][ii]=0;
+				}
+			}
+		}
+		for (int i = 1; i<=n; i ++) {
+			for (int ii = 1; ii <= n; ii++) {
+				System.out.print(nList[i][ii]+" ");
+			}
+			System.out.println();
+		}
+		
+		
+	}
+}

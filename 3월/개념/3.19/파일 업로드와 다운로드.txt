@@ -1,0 +1,41 @@
+파일 업로드시 기존 form 태그에 action은 동일, method를 post
+enctype이라는 새로운 속성부분에 mutipart/form-data (단일 업로드, 다중 업로드) 라는 값을 넣는다
+그 이후 input태그에 각 정보를 입력하는건 동일하나, 업로드할 영역에
+<input type="file" name="asdf"... 기타등등 속성을 넣고.. / 다중 업로드할땐 이부분에 multiple이라는 새로운 속성에 multiple이라는 값을 꼭 넣어줘야 다중업로드 가능!
+그러니
+
+ 
+
+<단일 업로드>
+
+<form action="action" method="post" enctype="multipart/form-data">
+      <input type="file" name="hamaster">
+      <input type="submit">
+</form> 
+ 
+
+<다중 업로드>
+
+<form action="action" method="post" enctype="multipart/form-data">
+      <input type="file" name="hamaster" mutiple="multiple"> <- 요 부분에 mutiple이라는 속성이 새로이 들어감!
+      <input type="submit">
+</form> 
+
+
+context.xml에다가 allowCasualMultipartparsing="true" 넣어주고
+용량을 제어할 수 잇음
+<multipart-config>
+    <max-file-size> 요부분은 파일 업로드 하나하나 요소의 제한 크기
+    <max-request-size> 요부분은 파일 업로드들을 전부 했었을때 최종 크기(total)
+</multipart-config>
+
+아무튼 업로드와 다운로드 기능 구현시 필요한 절차들이 있었고
+현재는.. 까먹었음... ㅠㅠ
+
+그리고 새로이 알게된것
+post = body태그에 저장된다
+model = spring에서 모든 객체의 집합
+스프링은 new User하지 않아도 알잘딱으로 set 혹은 get 클래스변수 해줘서 잘 반영해줌(?)
+그냥 서블릿은 메인서블릿 내부에 doGet, doPost, doRegist등등의 내부변수에다가 일일히
+response.set머시기(UTF-8), request.getParameter 일일히 하면서 new User 만들고
+session.setAttribute("users", user) 이렇게 해줬었음
